@@ -1,0 +1,75 @@
+package com.quantityMeasurement;
+
+public class Length {
+	private double value;
+	private LengthUnit unit;
+
+	public enum LengthUnit {
+//		FEET(conversionFactor: 12.0),
+		FEET(12.0), INCHES(1.0);
+
+		private final double conversionFactor;
+
+		// enum to represent different units and their conversion factors with
+		// the base unit being inches. This means all the conversion factors are defined
+		// in terms of inches.
+		LengthUnit(double conversionFactor) {
+			this.conversionFactor = conversionFactor;
+		}
+
+		public double getConversionFactor() {
+			return conversionFactor;
+		}
+	}
+
+	public Length(double value, LengthUnit unit) {
+		if (unit == null) {
+			throw new IllegalArgumentException("unit cannot be null");
+		}
+
+		this.value = value;
+		this.unit = unit;
+	}
+
+	private double convertToBaseUnit() {
+		return this.value * this.unit.getConversionFactor();
+	}
+
+	public boolean compare(Length thatLength) {
+		if (thatLength == null) {
+			return false;
+		}
+		return Double.compare(this.convertToBaseUnit(), thatLength.convertToBaseUnit()) == 0;
+	}
+
+	// Override equals method
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null) {
+			return false;
+		}
+
+		if (getClass() != o.getClass()) {
+			return false;
+		}
+
+		Length that = (Length) o;
+
+		// Defensive check in case a null unit somehow bypassed the constructor
+		if (this.unit == null || that.unit == null)
+			return false;
+
+		return Double.compare(this.convertToBaseUnit(), that.convertToBaseUnit()) == 0;
+	}
+
+	// main method for standalone testing
+	public static void main(String[] args) {
+		Length l1 = new Length(1.0, LengthUnit.FEET);
+		Length l2 = new Length(12.0, LengthUnit.INCHES);
+		System.out.println("Are lengths equal ? " + l1.equals(l2));
+	}
+
+}
