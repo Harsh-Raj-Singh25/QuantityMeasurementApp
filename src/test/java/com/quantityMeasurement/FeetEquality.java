@@ -20,7 +20,7 @@ public class FeetEquality {
 		Feet feet1=new Feet(4.0);
 		Feet feet2=new Feet(5.2);
 		
-		assertTrue(feet1.equals(feet2));
+		assertFalse(feet1.equals(feet2));
 	}
 	
 	@Test
