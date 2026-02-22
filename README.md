@@ -1,39 +1,41 @@
 # QuantityMeasurementApp
-## UC5 - Unit-to-Unit Conversion
-Overview:
->UC5 extends the application’s capability by introducing explicit conversion operations between length units. While previous iterations focused on equality (e.g., is 1 foot equal to 12 inches?), UC5 allows the API to return a new numeric value or a Length instance converted from a source unit to a target unit.
-> This branch contains the code demonstrating explicit conversion between various Length Units.
-> It extends the previous comparison logic by allowing a source unit to be transformed into a specific target unit.
----
-### Date : 22 Feb 2026
-* Worked on feature 5 which focuses on the active conversion of length units.
-* Implemented the conversion logic within the `Length` class using a base-unit normalization strategy.
----
-* Performed operations in the following steps:
-* Step 1 – Refined Conversion Logic
-  > 1. Ensured all units in `LengthUnit` enum (FEET, INCHES, YARDS, CENTIMETERS) are relative to a single base unit (Inches).
-  > 2. Implemented the universal conversion formula: $\text{Value} \times (\frac{\text{Source Factor}}{\text{Target Factor}})$.
-  > 3. Removed premature rounding in internal methods to maintain high precision for units like Centimeters ($1\text{ cm} = 0.393701\text{ in}$).
-* Step 2 – Enhanced API Design
-  > 1. Added an instance method `convertTo(targetUnit)` that returns a new immutable `Length` object.
-  > 2. Implemented method overloading in `QuantityMeasurementApp` to handle both raw numeric values and `Length` objects.
-  > 3. Overrode `toString()` to provide human-readable output formatted to relevant decimal places.
-* Step 3 – Expanded Test Coverage
-  > 1. Added comprehensive test cases for unidirectional conversions (e.g., Inches to Feet, Yards to Inches).
-  > 2. Implemented "Round-Trip" test cases to verify that converting $A \rightarrow B \rightarrow A$ preserves the original value.
-  > 3. Utilized an **Epsilon ($\epsilon$)** of $1e-6$ in JUnit assertions to account for floating-point precision differences.
-  > 4. Verified exception handling for invalid inputs like `null` units or non-finite numbers (NaN/Infinity).
----
-* Key Features : 
->1. Explicit Conversion API: Provides a static method convert(value, source, target) for quick calculations.Value
->2. Object Immutability: The convertTo instance method returns a new Length object rather than modifying the current one, ensuring thread safety and data integrity.
->3. High Precision Math: Supports conversion for Centimeters using a specific factor ($1 \text{ cm} = 0.393701 \text{ inches}$) with floating-point precision handling.
->4. Method Overloading: The API supports both raw numeric conversion and object-based conversion.
----
-* Based on test cases, the program was optimized for mathematical accuracy.
-* Pushed the code to the repository.
-* Code : [UC 5](https://github.com/Harsh-Raj-Singh25/QuantityMeasurementApp/tree/feature/UC5-UnitConversion)
----
+## UC6 - Addition of Two Length Units
+> UC6 extends the application by introducing addition operations between length measurements. 
+> It enables the API to add two lengths of potentially different units and return the result in the unit of the first operand.
 
 
+---
+### Date : 20 Feb 2026
+* Worked on feature 6 which focuses on arithmetic operations for length units.
+* Implemented the addition logic within the `Length` class ensuring the result unit consistency.
+---
+### Performed operations in the following steps:
+* **Step 1 – Arithmetic Implementation in Value Object**
+  > 1. Added the `add()` instance method to the `Length` class to handle measurement summation.
+  > 2. Implemented normalization logic: both operands are converted to the base unit (Inches) before addition.
+  > 3. Ensured the final sum is converted from the base unit back to the unit of the first operand to maintain consistency.
 
+* **Step 2 – Validation and Immutability**
+  > 1. Confirmed that original `Length` objects remain unchanged after addition, adhering to the immutability principle.
+  > 2. Added validation to ensure both operands are non-null and contain finite numeric values (using `Double.isFinite`).
+  > 3. Optimized the code to perform the final unit conversion only once, resolving potential "double-conversion" inaccuracies.
+
+* **Step 3 – Test Coverage and Mathematical Properties**
+  > 1. Ensured comprehensive test cases cover same-unit addition (Feet + Feet) and cross-unit addition (Feet + Inches).
+  > 2. Verified the Commutative Property: confirmed that `add(A, B)` yields the same result as `add(B, A)`.
+  > 3. Implemented tests for Identity Element (adding zero) and negative value handling.
+  > 4. Continued use of **Epsilon ($\epsilon$)** of $1e-6$ in JUnit assertions to account for floating-point precision differences.
+---
+### Features
+* **Generic Length Design:** Scalable architecture that supports adding new units (Feet, Inches, Yards, Centimeters) with zero modification to core logic.
+* **Immutability:** Every operation returns a new `Length` instance, ensuring the original measurement data remains thread-safe and unchanged.
+* **High-Precision Conversions:** Mathematical accuracy is maintained for complex units like Centimeters using a specific factor ($1 \text{ cm} = 0.393701 \text{ in}$).
+* **Base-Unit Normalization:** Internal arithmetic and comparisons are performed by first converting heterogeneous units to a common base unit (Inches).
+* **Flexible API (Method Overloading):** Supports multiple ways to interact with the app, including raw value addition and object-based arithmetic.
+* **Epsilon-Based Assertions:** Uses a small tolerance ($\epsilon = 1e-6$) in testing to handle binary floating-point rounding issues without losing data precision.
+* **Value Object Semantics:** Features overridden `equals()` and `toString()` methods for better readability and safe object comparison.
+---
+
+* **Based on test cases, the program was optimized for mathematical accuracy.**
+* **Pushed the code to the repository.**
+* **Code :** [UC 6](https://github.com/Harsh-Raj-Singh25/QuantityMeasurementApp/tree/feature/UC6-UnitAddition)
