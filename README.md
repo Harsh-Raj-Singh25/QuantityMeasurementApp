@@ -1,44 +1,41 @@
 # QuantityMeasurementApp
-## UC10 - Generic Quantity Class with Multi-Category Support
+## UC11 - Volume Measurement Equality, Conversion, and Addition
 ### Overview
-> UC10 refactors the application into a single, type-safe `Quantity<U>` class that works with any measurement category through a common `IMeasurable` interface. This architectural shift eliminates code duplication across category-specific classes (like `QuantityLength` and `QuantityWeight`) and restores the **Single Responsibility Principle** by consolidating unit-related patterns.
+> UC11 extends the Quantity Measurement Application to support the **Volume** category (Litre, Millilitre, Gallon). This use case serves as a validation of the generic architecture established in UC10, proving that the `Quantity<U>` class and `IMeasurable` interface can scale to new physical dimensions without any modifications to core logic.
 ---
-### Date : 21 Feb 2026
-* Defined the `IMeasurable` interface to standardize unit behavior.
-* Refactored Length and Weight categories into a unified `Quantity<U>` generic structure.
+### Date : 23 Feb 2026
+* Implemented the `VolumeUnit` standalone enum implementing `IMeasurable`.
+* Verified 100% integration with generic demonstration and testing suites.
 ---
 ### Performed operations in the following steps:
-* **Step 1 – Defining IMeasurable Interface**
-  > 1. Created a contract for all units requiring `getConversionFactor()`, `convertToBaseUnit()`, and `convertFromBaseUnit()`.
-  > 2. Updated `LengthUnit` and `WeightUnit` enums to implement this interface consistently.
-* **Step 2 – Implementing the Generic Quantity Class**
-  > 1. Created a single `Quantity<U>` class to replace `QuantityLength` and `QuantityWeight`.
-  > 2. Implemented generic `equals()`, `add()`, and `convertTo()` methods that work with any `IMeasurable` unit.
-  > 3. Added runtime category validation in `equals()` to prevent cross-category equality even when base values match.
-* **Step 3 – Simplifying Demonstration & Test Infrastructure**
-  > 1. Refactored `QuantityMeasurementApp` to use generic methods, significantly reducing method count and complexity.
-  > 2. Verified that the generic implementation maintains 100% backward compatibility with UC1–UC9 test cases.
-  > 3. Established a template for "zero-code" expansion; adding new units now requires only a new enum, with no changes to the Quantity class.
+* **Step 1 – Creating the VolumeUnit Enum**
+  > 1. Defined units: **LITRE** (Base: 1.0), **MILLILITRE** (0.001), and **GALLON** (3.78541).
+  > 2. Implemented the `IMeasurable` contract to provide centralized conversion factors relative to Litres.
+* **Step 2 – Generic Logic Validation**
+  > 1. Verified that `Quantity<VolumeUnit>` correctly identifies equivalent values across units (e.g., 1 L = 1000 mL).
+  > 2. Validated the `convertTo()` and `add()` methods for cross-unit volume arithmetic.
+* **Step 3 – Integration & Regression Testing**
+  > 1. Confirmed that adding the Volume category does not affect existing Length and Weight functionality (Backward Compatibility).
+  > 2. Verified category isolation: Attempting to compare `Quantity<VolumeUnit>` with `Quantity<LengthUnit>` returns `false`.
 ---
 ### Features
-* **Generic Bounded Types:** Uses `Quantity<U extends IMeasurable>` to enforce type safety at compile-time while allowing universal logic reuse.
-* **Interface-Based Design:** The `IMeasurable` interface standardizes conversion behavior, enabling polymorphic handling of all unit types.
-* **Category Type Safety:** Implements runtime checks using `unit.getClass()` to prevent logically invalid comparisons (e.g., 1 Foot ≠ 1 Kilogram).
-* **Consolidated Orchestration:** Simplifies the `QuantityMeasurementApp` class by replacing category-specific methods with unified generic demonstration methods.
-* **Open-Closed Principle (OCP):** The system is now open for extension (adding new categories like Volume or Temperature) but closed for modification of core logic.
+* **Zero-Modification Scaling:** Volume support was added purely by creating a new `VolumeUnit` enum; no changes were required for the `Quantity` class or demonstration methods.
+* **Unified Volume API:** Supports equality, conversion, and addition for Litres (Base), Millilitres, and Gallons.
+* **Multi-Category Isolation:** Maintains strict type safety, ensuring Volume measurements are incomparable to Length or Weight.
+* **High Precision Conversions:** Handles imperial-to-metric transformations (Gallons to Litres) with a consistent epsilon-based precision.
+* **Functional Immutability:** All volume operations return new `Quantity<VolumeUnit>` instances, preserving the state of original measurements.
 ---
-### Concepts Learned in UC10
-* **Generic Programming:** Leveraging Java Generics to write reusable, type-safe logic that scales linearly rather than exponentially.
-* **Type Erasure & Wildcards:** Handling the limitations of runtime type erasure by using wildcards (`Quantity<?>`) and object class checks.
-* **DRY (Don't Repeat Yourself):** Eliminating boilerplate code by centralizing algorithm implementations across diverse domain categories.
-* **Polymorphism & Delegation:** Using interface-based delegation to allow the Quantity class to perform math without knowing unit-specific details.
+### Concepts Learned in UC11
+* **Architecture Linearity:** Confirmed that the cost of adding new categories remains constant rather than increasing as the system grows.
+* **Domain Isolation:** Reinforcing the boundaries between different physical quantities through class-level runtime checks.
+* **Imperial vs. Metric Precision:** Managing the mathematical nuances of non-metric units like Gallons within a normalized base-unit system.
 ---
 ### Example Output
-* **Generic Equality**: `new Quantity<>(1.0, FEET).equals(new Quantity<>(12.0, INCHES))` -> **true**
-* **Unified Conversion**: `new Quantity<>(1.0, KILOGRAM).convertTo(GRAM)` -> **Quantity(1000.0, GRAM)**
-* **Safety Check**: `1.0 Foot` equals `1.0 Kilogram` -> **false (Category Mismatch)**
+* **Equality**: `new Quantity<>(1.0, LITRE).equals(1000.0, MILLILITRE)` -> **true**
+* **Conversion**: `new Quantity<>(1.0, GALLON).convertTo(LITRE)` -> **Quantity(3.785, LITRE)**
+* **Addition**: `new Quantity<>(1.0, GALLON).add(3.785, LITRE)` -> **Quantity(2.0, GALLON)**
+* **Safety Check**: `1.0 Litre` equals `1.0 Foot` -> **false (Category Mismatch)**
 ---
-
-* **Based on the defined test cases, the architecture now supports infinite measurement categories with a single, maintainable code path.**
-* **Pushed the generic refactor to the repository.**
-* **Code :** [UC 10 Generic Refactor](https://github.com/Harsh-Raj-Singh25/QuantityMeasurementApp/edit/feature/UC10-Generic-Quantity-Class)
+* **The system successfully demonstrated full multi-category support with a single, maintainable code path.**
+* **Pushed the Volume category implementation to the repository.**
+* **Code :** [UC 11 Volume Support](https://github.com/Harsh-Raj-Singh25/QuantityMeasurementApp/edit/feature/UC11-Volume-Measurement)
