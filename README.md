@@ -1,44 +1,42 @@
 # QuantityMeasurementApp
-## UC12 - Subtraction and Division Operations
+## UC13 - Centralized Arithmetic Logic (DRY Refactor)
 ### Overview
-> UC12 enhances the generic `Quantity<U>` class by implementing **Subtraction** and **Division** operations. While subtraction allows for finding the difference between two quantities (returning a new `Quantity`), division computes the ratio between two quantities of the same category, resulting in a **dimensionless scalar** (primitive `double`).
+> UC13 refactors the arithmetic engine implemented in UC12 to eliminate code duplication and enforce the **DRY (Don't Repeat Yourself)** principle. By introducing a centralized validation helper and an enum-based operation dispatcher using **Java Lambdas**, the application now processes all arithmetic operations through a single, maintainable code path.
 ---
-
 ### Date : 23 Feb 2026
-* Implemented generic `subtract()` and `divide()` methods in the `Quantity<U>` class.
-* Added specialized demonstration logic to `QuantityMeasurementApp` to showcase ratio calculations.
+* Refactored the `Quantity<U>` class to use centralized private helpers for arithmetic.
+* Implemented Lambda-based operation dispatching via `ArithmeticOperation` enum.
 ---
 ### Performed operations in the following steps:
-* **Step 1 – Implementing Subtraction**
-  > 1. Created overloaded `subtract()` methods with support for implicit and explicit target units.
-  > 2. Integrated normalization to the base unit before performing the arithmetic to ensure cross-unit accuracy (e.g., Feet minus Inches).
-* **Step 2 – Implementing Division (Ratio Calculation)**
-  > 1. Developed the `divide()` method to return a `double` representing the ratio between two measurements.
-  > 2. Added validation to throw an `ArithmeticException` if the divisor is a zero-quantity.
-* **Step 3 – Validation and Safety Integration**
-  > 1. Added a runtime `unit.getClass()` check to ensure arithmetic is only performed within the same measurement category.
-  > 2. Verified that all operations maintain **Immutability**, returning new results without altering the state of the original operands.
+* **Step 1 – Designing the Arithmetic Dispatcher**
+  > 1. Created a private `ArithmeticOperation` enum using the `@FunctionalInterface` `DoubleBinaryOperator`.
+  > 2. Defined mathematical strategies as lambdas: `(a, b) -> a + b` for addition and `(a, b) -> a - b` for subtraction.
+* **Step 2 – Creating Centralized Helpers**
+  > 1. Extracted all guard clauses into `validateArithmeticOperands()` to ensure unified error handling.
+  > 2. Implemented `performBaseArithmetic()` to handle the conversion of both operands to the base unit before executing the lambda.
+* **Step 3 – Refactoring Public Methods**
+  > 1. Updated `add()`, `subtract()`, and `divide()` to delegate all work to the new internal helpers.
+  > 2. Verified through unit testing that the refactor preserved method chaining and immutability.
 ---
 ### Features
-* **Full Arithmetic Suite:** Complements existing addition logic with robust subtraction and division capabilities.
-* **Dimensionless Ratios:** Division logic correctly identifies that dividing like-units (e.g., Length/Length) results in a unitless scalar value.
-* **Non-Commutative Logic:** Properly handles operations where order matters, ensuring $A - B$ and $B - A$ produce mathematically distinct results.
-* **Strict Error Handling:** Implements fail-fast validation for **Division by Zero** and **Null Operands**.
-* **Method Chaining Support:** Arithmetic methods return new `Quantity<U>` instances, allowing for fluid operations like `q1.add(q2).subtract(q3)`.
-* **Cross-Category Protection:** Prevents logically invalid operations (e.g., Subtracting Weight from Volume) through runtime class verification.
+* **Centralized Validation:** Consolidates null checks, category verification, and finiteness validation into a single private helper method.
+* **Functional Dispatcher:** Utilizes an internal `ArithmeticOperation` enum with `DoubleBinaryOperator` lambdas to encapsulate mathematical logic (ADD, SUBTRACT, DIVIDE).
+* **Consistency Enforcement:** Ensures that error messages, rounding behavior, and base-unit normalization are identical across all operations.
+* **Scalable Architecture:** Establishing a "Single Source of Truth" allows new operations (like Multiply or Modulo) to be added by updating a single enum constant.
+* **Backward Compatibility:** Internal refactoring maintains the exact same public API and functional behavior established in UC1–UC12.
 ---
-### Concepts Learned in UC12
-* **Dimensionless Quantities:** Understanding how units cancel out in division to produce scalar ratios.
-* **Mathematical Property Verification:** Testing for non-commutativity and non-associativity in arithmetic logic.
-* **Runtime vs. Compile-time Safety:** Using `.getClass()` checks to bypass generic type erasure limitations during arithmetic validation.
-* **Arithmetic Inverses:** Verifying the mathematical relationship between operations (e.g., $A + B - B \approx A$).
+### Concepts Learned in UC13
+* **DRY (Don't Repeat Yourself):** Reducing the "bug surface" by ensuring logic is implemented exactly once.
+* **Lambda Expressions & Functional Interfaces:** Treating logic as data to simplify complex conditional structures.
+* **Encapsulation:** Using private visibility for core engine details while maintaining a stable public interface.
+* **Code Maintainability:** Reducing method length and complexity to improve readability and long-term project health.
 ---
-### Example Output
-* **Subtraction**: `10.0 FEET - 6.0 INCHES` -> **9.50 FEET**
-* **Division**: `10.0 KILOGRAM / 5.0 KILOGRAM` -> **2.0** (Scalar)
-* **Cross-Unit Ratio**: `24.0 INCHES / 2.0 FEET` -> **1.0**
-* **Error Handling**: `10.0 FEET / 0.0 FEET` -> **Throws ArithmeticException**
+### Internal Flow Example
+1.  **Public Call**: `q1.subtract(q2, FEET)`
+2.  **Validation**: `validateArithmeticOperands` checks nulls and category compatibility.
+3.  **Computation**: `performBaseArithmetic` converts both to base units and triggers the `SUBTRACT` lambda.
+4.  **Result**: The result is denormalized to the target unit and returned as a new `Quantity`.
 ---
-* **The system now provides a comprehensive mathematical API for manipulating physical measurements across all supported categories.**
-* **Pushed the Subtraction and Division implementation to the repository.**
-* **Code :** [UC 12 Arithmetic Expansion](https://github.com/Harsh-Raj-Singh25/QuantityMeasurementApp/edit/feature/UC12-SubtractionDivisionOperations)
+* **The refactoring successfully consolidated the measurement engine, making the codebase cleaner and more robust.**
+* **Pushed the DRY Refactor implementation to the repository.**
+* **Code :** [UC 13 DRY Refactor](https://github.com/Harsh-Raj-Singh25/QuantityMeasurementApp/edit/feature/UC13-CentralizedArithmeticLogic)
