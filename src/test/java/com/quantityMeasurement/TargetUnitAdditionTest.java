@@ -2,9 +2,7 @@ package com.quantityMeasurement;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
-
-import com.quantityMeasurement.Length.LengthUnit;
+import org.junit.Test; 
 
 public class TargetUnitAdditionTest {
 	private static final double EPSILON = 1e-3; // Tolerance for floating-point comparisons

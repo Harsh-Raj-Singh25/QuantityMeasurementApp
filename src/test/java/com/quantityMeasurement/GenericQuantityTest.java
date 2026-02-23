@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.quantityMeasurement.Length.LengthUnit;
 
 public class GenericQuantityTest {
 	@Test
@@ -50,7 +49,7 @@ public class GenericQuantityTest {
 	}
 	@Test
 	public void testEquality_InvalidUnit() {
-	    Length feet = new Length(1.0, Length.LengthUnit.FEET);
+	    Length feet = new Length(1.0,  LengthUnit.FEET);
 	    Object notALength = new Object();
 	    
 	    // Should return false, not crash

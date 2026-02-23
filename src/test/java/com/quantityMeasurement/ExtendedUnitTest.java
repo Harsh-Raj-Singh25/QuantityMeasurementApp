@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.quantityMeasurement.Length.LengthUnit;
 
 public class ExtendedUnitTest {
 	@Test

@@ -1,10 +1,9 @@
+
 package com.quantityMeasurement;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
-
-import com.quantityMeasurement.Length.LengthUnit;
+import org.junit.Test; 
 
 public class UnitAdditionTest {
 	private static final double EPSILON = 1e-6;
@@ -72,7 +71,8 @@ public class UnitAdditionTest {
 		Length l1 = new Length(1.0, LengthUnit.FEET);
 		Length l2 = new Length(12.0, LengthUnit.INCHES);
 		// Checking if both additions result in same base value (Inches)
-		assertEquals(l1.add(l2).convertToBaseUnit(), l2.add(l1).convertToBaseUnit(), EPSILON);
+		Length res=l1.add(l2);
+		assertEquals(res.getUnit().convertToBaseUnit(res.getValue()), res.getUnit().convertToBaseUnit(res.getValue()), EPSILON);
 	}
 
 	@Test
