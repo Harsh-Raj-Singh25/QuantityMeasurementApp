@@ -195,7 +195,7 @@ public class QuantityMeasurementApp {
 				+ LengthUnit.INCHES.convertToBaseUnit(12.0));
 		
 		
-		System.out.println("--- UC 9: Weight Measurement Implementation ---");
+		System.out.println("--- UC 9:  Weight Measurement Implementation ---");
 
         //  Equality Comparisons 
         System.out.println("Input: Quantity(1.0, KILOGRAM).equals(Quantity(1.0, KILOGRAM)) -> Output: " + 
