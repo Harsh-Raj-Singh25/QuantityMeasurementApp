@@ -7,6 +7,7 @@ import org.junit.Test;
 
 
 public class LengthQuantityTest {
+	
 	@Test
 	public void testEquality_FeetToFeet_SameValue() {
 		Length feet1=new Length(1.0,LengthUnit.FEET);
