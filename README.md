@@ -1,41 +1,44 @@
 # QuantityMeasurementApp
-## UC11 - Volume Measurement Equality, Conversion, and Addition
+## UC12 - Subtraction and Division Operations
 ### Overview
-> UC11 extends the Quantity Measurement Application to support the **Volume** category (Litre, Millilitre, Gallon). This use case serves as a validation of the generic architecture established in UC10, proving that the `Quantity<U>` class and `IMeasurable` interface can scale to new physical dimensions without any modifications to core logic.
+> UC12 enhances the generic `Quantity<U>` class by implementing **Subtraction** and **Division** operations. While subtraction allows for finding the difference between two quantities (returning a new `Quantity`), division computes the ratio between two quantities of the same category, resulting in a **dimensionless scalar** (primitive `double`).
 ---
+
 ### Date : 23 Feb 2026
-* Implemented the `VolumeUnit` standalone enum implementing `IMeasurable`.
-* Verified 100% integration with generic demonstration and testing suites.
+* Implemented generic `subtract()` and `divide()` methods in the `Quantity<U>` class.
+* Added specialized demonstration logic to `QuantityMeasurementApp` to showcase ratio calculations.
 ---
 ### Performed operations in the following steps:
-* **Step 1 – Creating the VolumeUnit Enum**
-  > 1. Defined units: **LITRE** (Base: 1.0), **MILLILITRE** (0.001), and **GALLON** (3.78541).
-  > 2. Implemented the `IMeasurable` contract to provide centralized conversion factors relative to Litres.
-* **Step 2 – Generic Logic Validation**
-  > 1. Verified that `Quantity<VolumeUnit>` correctly identifies equivalent values across units (e.g., 1 L = 1000 mL).
-  > 2. Validated the `convertTo()` and `add()` methods for cross-unit volume arithmetic.
-* **Step 3 – Integration & Regression Testing**
-  > 1. Confirmed that adding the Volume category does not affect existing Length and Weight functionality (Backward Compatibility).
-  > 2. Verified category isolation: Attempting to compare `Quantity<VolumeUnit>` with `Quantity<LengthUnit>` returns `false`.
+* **Step 1 – Implementing Subtraction**
+  > 1. Created overloaded `subtract()` methods with support for implicit and explicit target units.
+  > 2. Integrated normalization to the base unit before performing the arithmetic to ensure cross-unit accuracy (e.g., Feet minus Inches).
+* **Step 2 – Implementing Division (Ratio Calculation)**
+  > 1. Developed the `divide()` method to return a `double` representing the ratio between two measurements.
+  > 2. Added validation to throw an `ArithmeticException` if the divisor is a zero-quantity.
+* **Step 3 – Validation and Safety Integration**
+  > 1. Added a runtime `unit.getClass()` check to ensure arithmetic is only performed within the same measurement category.
+  > 2. Verified that all operations maintain **Immutability**, returning new results without altering the state of the original operands.
 ---
 ### Features
-* **Zero-Modification Scaling:** Volume support was added purely by creating a new `VolumeUnit` enum; no changes were required for the `Quantity` class or demonstration methods.
-* **Unified Volume API:** Supports equality, conversion, and addition for Litres (Base), Millilitres, and Gallons.
-* **Multi-Category Isolation:** Maintains strict type safety, ensuring Volume measurements are incomparable to Length or Weight.
-* **High Precision Conversions:** Handles imperial-to-metric transformations (Gallons to Litres) with a consistent epsilon-based precision.
-* **Functional Immutability:** All volume operations return new `Quantity<VolumeUnit>` instances, preserving the state of original measurements.
+* **Full Arithmetic Suite:** Complements existing addition logic with robust subtraction and division capabilities.
+* **Dimensionless Ratios:** Division logic correctly identifies that dividing like-units (e.g., Length/Length) results in a unitless scalar value.
+* **Non-Commutative Logic:** Properly handles operations where order matters, ensuring $A - B$ and $B - A$ produce mathematically distinct results.
+* **Strict Error Handling:** Implements fail-fast validation for **Division by Zero** and **Null Operands**.
+* **Method Chaining Support:** Arithmetic methods return new `Quantity<U>` instances, allowing for fluid operations like `q1.add(q2).subtract(q3)`.
+* **Cross-Category Protection:** Prevents logically invalid operations (e.g., Subtracting Weight from Volume) through runtime class verification.
 ---
-### Concepts Learned in UC11
-* **Architecture Linearity:** Confirmed that the cost of adding new categories remains constant rather than increasing as the system grows.
-* **Domain Isolation:** Reinforcing the boundaries between different physical quantities through class-level runtime checks.
-* **Imperial vs. Metric Precision:** Managing the mathematical nuances of non-metric units like Gallons within a normalized base-unit system.
+### Concepts Learned in UC12
+* **Dimensionless Quantities:** Understanding how units cancel out in division to produce scalar ratios.
+* **Mathematical Property Verification:** Testing for non-commutativity and non-associativity in arithmetic logic.
+* **Runtime vs. Compile-time Safety:** Using `.getClass()` checks to bypass generic type erasure limitations during arithmetic validation.
+* **Arithmetic Inverses:** Verifying the mathematical relationship between operations (e.g., $A + B - B \approx A$).
 ---
 ### Example Output
-* **Equality**: `new Quantity<>(1.0, LITRE).equals(1000.0, MILLILITRE)` -> **true**
-* **Conversion**: `new Quantity<>(1.0, GALLON).convertTo(LITRE)` -> **Quantity(3.785, LITRE)**
-* **Addition**: `new Quantity<>(1.0, GALLON).add(3.785, LITRE)` -> **Quantity(2.0, GALLON)**
-* **Safety Check**: `1.0 Litre` equals `1.0 Foot` -> **false (Category Mismatch)**
+* **Subtraction**: `10.0 FEET - 6.0 INCHES` -> **9.50 FEET**
+* **Division**: `10.0 KILOGRAM / 5.0 KILOGRAM` -> **2.0** (Scalar)
+* **Cross-Unit Ratio**: `24.0 INCHES / 2.0 FEET` -> **1.0**
+* **Error Handling**: `10.0 FEET / 0.0 FEET` -> **Throws ArithmeticException**
 ---
-* **The system successfully demonstrated full multi-category support with a single, maintainable code path.**
-* **Pushed the Volume category implementation to the repository.**
-* **Code :** [UC 11 Volume Support](https://github.com/Harsh-Raj-Singh25/QuantityMeasurementApp/edit/feature/UC11-Volume-Measurement)
+* **The system now provides a comprehensive mathematical API for manipulating physical measurements across all supported categories.**
+* **Pushed the Subtraction and Division implementation to the repository.**
+* **Code :** [UC 12 Arithmetic Expansion](https://github.com/Harsh-Raj-Singh25/QuantityMeasurementApp/edit/feature/UC12-SubtractionDivisionOperations)
