@@ -125,11 +125,7 @@ public class GenericQuantityTest {
         public double getConversionFactor() { return factor; }
         public double convertToBaseUnit(double v) { return v * factor; }
         public double convertFromBaseUnit(double b) { return b / factor; }
-		@Override
-		public String getUnitName() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+		
     }
     @Test
     public void testScalability_NewUnitEnumIntegration() {

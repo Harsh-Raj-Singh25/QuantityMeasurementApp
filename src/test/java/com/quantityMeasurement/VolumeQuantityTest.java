@@ -84,8 +84,8 @@ public class VolumeQuantityTest {
 	//   Standalone Enum Verification ---
 	@Test
 	public void testVolumeUnitEnum_FactorAccuracy() {
-		assertEquals(1.0, VolumeUnit.LITRE.getConversionFactor(), EPSILON);
-		assertEquals(0.001, VolumeUnit.MILLILITRE.getConversionFactor(), EPSILON);
-		assertEquals(3.78541, VolumeUnit.GALLON.getConversionFactor(), EPSILON);
+		assertEquals(1.0, VolumeUnit.LITRE.conversionFactor, EPSILON);
+		assertEquals(0.001, VolumeUnit.MILLILITRE.conversionFactor, EPSILON);
+		assertEquals(3.78541, VolumeUnit.GALLON.conversionFactor, EPSILON);
 	}
 }

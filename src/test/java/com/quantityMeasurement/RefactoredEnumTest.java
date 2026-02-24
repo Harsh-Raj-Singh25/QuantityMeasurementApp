@@ -13,25 +13,25 @@ public class RefactoredEnumTest {
 	@Test
 	public void testLengthUnitEnum_FeetConstant() {
 		// Verifies LengthUnit.FEET is accessible and has correct conversion factor 1.0.
-		assertEquals(1.0, LengthUnit.FEET.getConversionFactor(), EPSILON);
+		assertEquals(1.0, LengthUnit.FEET.conversionFactor, EPSILON);
 	}
 
 	@Test
 	public void testLengthUnitEnum_InchesConstant() {
 		// Verifies LengthUnit.INCHES has the correct conversion factor (1/12).
-		assertEquals(0.0833, LengthUnit.INCHES.getConversionFactor(), EPSILON);
+		assertEquals(0.0833, LengthUnit.INCHES.conversionFactor, EPSILON);
 	}
 
 	@Test
 	public void testLengthUnitEnum_YardsConstant() {
 		// Verifies LengthUnit.YARDS has correct conversion factor 3.0.
-		assertEquals(3.0, LengthUnit.YARDS.getConversionFactor(), EPSILON);
+		assertEquals(3.0, LengthUnit.YARDS.conversionFactor, EPSILON);
 	}
 
 	@Test
 	public void testLengthUnitEnum_CentimetersConstant() {
 		// Verifies LengthUnit.CENTIMETERS has correct conversion factor (1/30.48).
-		assertEquals(0.0328, LengthUnit.CENTIMETERS.getConversionFactor(), EPSILON);
+		assertEquals(0.0328, LengthUnit.CENTIMETERS.conversionFactor, EPSILON);
 	}
 
 	// --- Convert To Base Unit (Feet) Verification ---
