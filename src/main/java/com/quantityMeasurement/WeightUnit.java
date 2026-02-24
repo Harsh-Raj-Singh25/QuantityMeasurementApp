@@ -13,17 +13,17 @@ public enum WeightUnit implements IMeasurable {
 		this.conversionFactor = conversionFactor;
 	}
 
-	@Override
-	public double getConversionFactor() {
-		return conversionFactor;
-	}
+//	@Override
+//	public double getConversionFactor() {
+//		return conversionFactor;
+//	}
 
 	/**
 	 * Responsibility 1: Convert value in this unit to the base unit (Feet).
 	 */
 	@Override
 	public double convertToBaseUnit(double value) {
-		return value * getConversionFactor();
+		return value * conversionFactor;
 	}
 
 	/**
@@ -31,16 +31,16 @@ public enum WeightUnit implements IMeasurable {
 	 */
 	@Override
 	public double convertFromBaseUnit(double baseValue) {
-		return baseValue / getConversionFactor();
+		return baseValue / conversionFactor;
 	}
 
 	public double convert(double value, LengthUnit targetUnit) {
 		double feetValue = this.convertToBaseUnit(value);
-		return feetValue / targetUnit.getConversionFactor();
+		return feetValue / targetUnit.conversionFactor;
 	}
 
-	@Override
-	public String getUnitName() {
-		return this.getUnitName();
-	}
+//	@Override
+//	public String getUnitName() {
+//		return this.getUnitName();
+//	}
 }

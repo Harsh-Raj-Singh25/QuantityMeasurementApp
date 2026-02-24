@@ -8,7 +8,7 @@ public enum LengthUnit implements IMeasurable{
     INCHES(1.0 / 12.0), 
     YARDS(3.0), 
     CENTIMETERS(1.0 / 30.48);
-	private final double conversionFactor;
+	final double conversionFactor;
 
 	// enum to represent different units and their conversion factors with
 	// the base unit being inches. This means all the conversion factors are defined
@@ -16,17 +16,17 @@ public enum LengthUnit implements IMeasurable{
 	LengthUnit(double conversionFactor) {
 		this.conversionFactor = conversionFactor;
 	}
-	@Override
-	public double getConversionFactor() {
-		return conversionFactor;
-	}
+//	@Override
+//	public double getConversionFactor() {
+//		return conversionFactor;
+//	}
 	
 	/**
      * Responsibility 1: Convert value in this unit to the base unit (Feet).
      */
 	@Override
     public double convertToBaseUnit(double value) {
-        return value * getConversionFactor();
+        return value * conversionFactor;
     }
 //    double convertToBaseUnit() {
 //		return value * this.unit.getConversionFactor();
@@ -39,15 +39,15 @@ public enum LengthUnit implements IMeasurable{
      */
 	@Override
     public double convertFromBaseUnit(double baseValue) {
-        return baseValue / getConversionFactor();
+        return baseValue / conversionFactor;
     }
     public double convert(double value, LengthUnit targetUnit) {
         double feetValue = this.convertToBaseUnit(value);
-        return feetValue / targetUnit.getConversionFactor();
+        return feetValue / targetUnit.conversionFactor;
     }
     
-    @Override
-    public String getUnitName() {
-    	return this.getUnitName();
-    }
+//    @Override
+//    public String getUnitName() {
+//    	return this.getUnitName();
+//    }
 }
