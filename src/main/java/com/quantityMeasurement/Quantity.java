@@ -86,6 +86,7 @@ public class Quantity<U extends IMeasurable> {
 	 * UC13: Centralized validation to enforce consistent error handling.
 	 */
 	private void validateArithmeticOperands(Quantity<U> other, U targetUnit, boolean targetUnitRequired) {
+	   
 	    if (other == null) throw new IllegalArgumentException("Operand cannot be null");
 	    if (this.unit.getClass() != other.unit.getClass()) {
 	        throw new IllegalArgumentException("Cross-category arithmetic is not allowed");
@@ -93,6 +94,8 @@ public class Quantity<U extends IMeasurable> {
 	    if (targetUnitRequired && targetUnit == null) {
 	        throw new IllegalArgumentException("Target unit cannot be null");
 	    }
+	    // UC14: Check if the unit supports arithmetic (e.g., addition)
+	    this.unit.validateOperationSupport("Arithmetic");
 	}
 
 	/**
