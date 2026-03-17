@@ -1,4 +1,11 @@
-package com.quantityMeasurement;
+package com.quantityMeasurement.applicationLayer;
+
+import com.quantityMeasurement.IMeasurable;
+import com.quantityMeasurement.LengthUnit;
+import com.quantityMeasurement.TemperatureUnit;
+import com.quantityMeasurement.VolumeUnit;
+import com.quantityMeasurement.WeightUnit;
+import com.quantityMeasurement.model.Quantity;
 
 public class QuantityMeasurementApp {
 	/**

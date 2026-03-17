@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import com.quantityMeasurement.model.Quantity;
+
 public class GenericQuantityTest {
 	private static final double EPSILON = 1e-3;
 

@@ -1,7 +1,9 @@
 package com.quantityMeasurement;
 
 import static org.junit.Assert.*;
-import org.junit.Test; 
+import org.junit.Test;
+
+import com.quantityMeasurement.applicationLayer.QuantityMeasurementApp; 
 
 public class UnitConversionTest {
     private static final double EPSILON = 1e-6;

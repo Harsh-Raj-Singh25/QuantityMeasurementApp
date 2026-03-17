@@ -1,6 +1,9 @@
 package com.quantityMeasurement; 
 
 import org.junit.Test;
+
+import com.quantityMeasurement.model.Quantity;
+
 import static org.junit.Assert.*;
 
 public class SubtractionDivisionTest {

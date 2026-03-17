@@ -1,30 +1,40 @@
-package com.quantityMeasurement;
+package com.quantityMeasurement.model;
 
 import java.util.Objects;
 import java.util.function.DoubleBinaryOperator;
 
+import com.quantityMeasurement.IMeasurable;
+import com.quantityMeasurement.LengthUnit;
+import com.quantityMeasurement.WeightUnit;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Quantity<U extends IMeasurable> {
 	private double value;
 	private U unit;
 
-	public Quantity(double value, U unit) {
-		if (unit == null) {
-			throw new IllegalArgumentException("Unit cannot be null");
-		}
-		if (!Double.isFinite(value)) {
-			throw new IllegalArgumentException("Value must be finite");
-		}
-		this.unit = unit;
-		this.value = value;
-	}
+//	public Quantity(double value, U unit) {
+//		if (unit == null) {
+//			throw new IllegalArgumentException("Unit cannot be null");
+//		}
+//		if (!Double.isFinite(value)) {
+//			throw new IllegalArgumentException("Value must be finite");
+//		}
+//		this.unit = unit;
+//		this.value = value;
+//	}
 
-	public double getValue() {
-		return value;
-	}
-
-	public U getUnit() {
-		return unit;
-	}
+//	public double getValue() {
+//		return value;
+//	}
+//
+//	public U getUnit() {
+//		return unit;
+//	}
 
 	@Override
 	public boolean equals(Object o) {
