@@ -1,50 +1,68 @@
 # QuantityMeasurementApp
-## UC14 - Temperature Measurement & Selective Arithmetic Support
+## UC15 - N-Tier Architecture Refactoring
 
 ### Overview
-> UC14 introduces **Temperature** (Celsius and Fahrenheit) as a fourth measurement category. This use case represents a significant architectural evolution, moving from simple linear conversion factors to formula-based transformations. Additionally, it implements **Selective Arithmetic Support**, allowing the system to logically prevent nonsensical operations like adding or dividing absolute temperatures.
+> UC15 transforms the monolithic Quantity Measurement Application into a professional **N-Tier Architecture**. By separating concerns into distinct layers—**Controller, Service, Repository, and Entity**—the system achieves high maintainability, loose coupling, and readiness for future scalability such as REST API integration.
 
 ---
-### Date : 23 Feb 2026
-* Refactored `IMeasurable` interface to support capability-based checks.
-* Implemented the `TemperatureUnit` enum with non-linear conversion logic.
+
+### Architectural Layers
+* **Application Layer:** Serves as the bootstrap entry point to initialize the system and coordinate the startup sequence.
+* **Controller Layer:** Acts as a Facade, orchestrating user interactions and delegating complex business logic to the service layer.
+* **Service Layer:** The core "Brain" of the application, encapsulating all conversion rules, arithmetic logic, and category validation.
+* **Repository Layer:** Provides an abstraction for data access, currently implemented as a **Singleton Cache** with disk-based serialization for operation history.
+* **Entity/Model Layer:** Defines standardized POJOs and DTOs (`QuantityDTO`, `QuantityModel`) to ensure consistent data flow between layers.
+
+---
+
+### Key Technical Implementations
+* **Dependency Injection:** The service layer receives its repository dependency via constructor injection, facilitating easier unit testing and mocking.
+* **Singleton Pattern:** Ensures a centralized point of access for quantity measurement data through the `QuantityMeasurementCacheRepository`.
+* **Data Transfer Objects (DTOs):** Utilizes `QuantityDTO` to decouple internal service models from external representation, standardizing the API contract.
+* **Interface Segregation (ISP):** Defined specific interfaces (`IQuantityMeasurementService`, `IQuantityMeasurementRepository`) to allow for flexible implementation swaps without affecting the overall structure.
+
+---
+
+### Date : 9 March 2026
+* Refactored monolithic code into a 4-tier architectural structure.
+* Implemented persistent caching for measurement operations.
+
 ---
 
 ### Performed operations in the following steps:
-* **Step 1 – Refactoring IMeasurable Interface**
-  > 1. Added a `SupportsArithmetic` functional interface and a default `supportsArithmetic()` method to the base interface.
-  > 2. Implemented `validateOperationSupport()` to provide a centralized hook for units to reject specific arithmetic calls.
-* **Step 2 – Implementing Temperature Logic**
-  > 1. Created `TemperatureUnit` using `Function<Double, Double>` to encapsulate Celsius-to-Fahrenheit and Fahrenheit-to-Celsius formulas.
-  > 2. Overrode capability methods to return `false` for arithmetic support, ensuring fail-fast behavior.
-* **Step 3 – Updating the Quantity Engine**
-  > 1. Enhanced `validateArithmeticOperands()` to query the unit’s support status before performing any math.
-  > 2. Verified that `equals()` and `convertTo()` remain fully functional for Temperature, allowing for comparison and state change without arithmetic.
+
+* **Step 1 – Designing Data Contracts**
+  > 1. Developed `QuantityDTO` for layer communication and `QuantityMeasurementEntity` for persistent storage of operation results.
+  > 2. Created the generic `QuantityModel<U>` to maintain internal type safety within the service layer.
+
+* **Step 2 – Implementing the Service & Repository**
+  > 1. Developed `QuantityMeasurementServiceImpl` to orchestrate business logic using normalized units.
+  > 2. Built a Singleton Cache Repository that uses Java Serialization to save operation history to disk.
+
+
+
+* **Step 3 – Orchestrating via Controller**
+  > 1. Created `QuantityMeasurementController` to handle requests and format results for the end-user.
+  > 2. Integrated centralized error handling to convert exceptions (like Temperature Addition) into readable error entities.
+
 ---
 
-### Features
-* **Non-Linear Conversion Engine:** Replaces simple multiplication factors with Java `Function` lambdas to handle complex formulas like $F = (C \times 9/5) + 32$.
-* **Interface Segregation (ISP):** Refactored `IMeasurable` with default methods to allow units to "opt-out" of arithmetic operations they do not support.
-* **Operational Guardrails:** Triggers `UnsupportedOperationException` when arithmetic is attempted on Temperature objects, while maintaining full support for Length, Weight, and Volume.
-* **Category Isolation:** Ensures Temperature remains a distinct domain, preventing any comparison with other physical quantities.
-* **Backward Compatibility:** Leverages default interface methods to ensure existing measurement units require no code changes.
+### Concepts Learned in UC15
+* **N-Tier Architecture:** Understanding the benefits of separating UI, Logic, and Data Persistence.
+* **Design Patterns:** Practical application of **Singleton**, **Factory**, **Facade**, and **Dependency Injection**.
+* **POJO & DTO Usage:** Learning to use lightweight data carriers to decouple system components.
+* **Persistent Storage:** Implementing object serialization to maintain application state across restarts.
+
 ---
 
-### Concepts Learned in UC14
-* **Interface Segregation Principle:** Designing interfaces that don't force implementations to support irrelevant behavior.
-* **Capability-Based Design:** Using the "Ask, Don't Assume" pattern to check object capabilities at runtime.
-* **Non-Linear Domain Modeling:** Transitioning from factor-based systems to formula-based systems using functional programming.
-* **Absolute vs. Relative Scales:** Understanding the physical constraints that make certain arithmetic operations (like temperature division) logically invalid.
+### Example Data Flow (Addition)
+1. **Controller**: Accepts `QuantityDTO` and calls `service.add()`.
+2. **Service**: Maps DTO to `QuantityModel`, validates categories, and performs math.
+3. **Repository**: Saves a `QuantityMeasurementEntity` containing operands and the result.
+4. **Controller**: Receives result DTO and presents it to the user.
+
 ---
 
-### Example Output
-* **Equality**: `0.0 CELSIUS` == `32.0 FAHRENHEIT` -> **true**
-* **Intersection Point**: `-40.0 CELSIUS` == `-40.0 FAHRENHEIT` -> **true**
-* **Conversion**: `100.0 CELSIUS` to `FAHRENHEIT` -> **212.0 FAHRENHEIT**
-* **Unsupported Operation**: `100.0 CELSIUS.add(50.0 CELSIUS)` -> **Throws UnsupportedOperationException**
-* **Category Safety**: `32.0 FAHRENHEIT` equals `32.0 FEET` -> **false**
----
-
-* **The system now supports complex, non-linear categories while enforcing strict logical boundaries on arithmetic operations.**
-* **Pushed the Temperature Support implementation to the repository.**
-* **Code :** [UC 14 Temperature Support](https://github.com/Harsh-Raj-Singh25/QuantityMeasurementApp/tree/feature/UC14-TemperatureMeasurement)
+* **The application now stands as a production-ready architectural template, ready for integration with frameworks like Spring Boot.**
+* **Pushed the N-Tier Refactor implementation to the repository.**
+* **Code :** [UC 15 N-Tier Architecture](https://github.com/Harsh-Raj-Singh25/QuantityMeasurementApp/tree/feature/UC15-NTierArchitecture)
