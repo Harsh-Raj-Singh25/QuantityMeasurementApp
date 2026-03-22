@@ -86,32 +86,32 @@ public class Length {
 
 	// UC7: Adds two measurements and returns the result in a specified target unit.
 	// * Uses a private helper to maintain the DRY principle.
-	public Length add(Length that, LengthUnit targetUnit) {
-		// Ensuring non-nullity and finite values
-		if (that == null || targetUnit == null) {
-			throw new IllegalArgumentException("Operand and target unit cannot be null");
-		}
-		// Explicit finite check for the current object and the operand
-		if (!Double.isFinite(this.value) || !Double.isFinite(that.value)) {
-			throw new IllegalArgumentException("Measurement values must be finite");
-		}
-		return addAndConvert(that, targetUnit);
-	}
-
-	/**
-	 * UC 7 Private utility method to centralize addition logic. Ensures consistent
-	 * precision and immutability.
-	 */
-	private Length addAndConvert(Length length, LengthUnit targetUnit) {
-		double sumInBaseUnit = this.unit.convertToBaseUnit(this.value) + length.unit.convertToBaseUnit(length.value);
-
-		double finalValue = convertFromBaseToTargetUnit(sumInBaseUnit, targetUnit);
-		return new Length(finalValue, targetUnit);
-	}
-
-	private double convertFromBaseToTargetUnit(double lengthInInches, LengthUnit target) {
-		return lengthInInches / target.getConversionFactor();
-	}
+//	public Length add(Length that, LengthUnit targetUnit) {
+//		// Ensuring non-nullity and finite values
+//		if (that == null || targetUnit == null) {
+//			throw new IllegalArgumentException("Operand and target unit cannot be null");
+//		}
+//		// Explicit finite check for the current object and the operand
+//		if (!Double.isFinite(this.value) || !Double.isFinite(that.value)) {
+//			throw new IllegalArgumentException("Measurement values must be finite");
+//		}
+//		return addAndConvert(that, targetUnit);
+//	}
+//
+//	/**
+//	 * UC 7 Private utility method to centralize addition logic. Ensures consistent
+//	 * precision and immutability.
+//	 */
+//	private Length addAndConvert(Length length, LengthUnit targetUnit) {
+//		double sumInBaseUnit = this.unit.convertToBaseUnit(this.value) + length.unit.convertToBaseUnit(length.value);
+//
+//		double finalValue = convertFromBaseToTargetUnit(sumInBaseUnit, targetUnit);
+//		return new Length(finalValue, targetUnit);
+//	}
+//
+//	private double convertFromBaseToTargetUnit(double lengthInInches, LengthUnit target) {
+//		return lengthInInches / target.getConversionFactor();
+//	}
 
 	// main method for standalone testing
 	public static void main(String[] args) {

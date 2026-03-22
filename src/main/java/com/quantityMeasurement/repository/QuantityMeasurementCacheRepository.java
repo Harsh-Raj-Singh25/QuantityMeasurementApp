@@ -1,6 +1,5 @@
 package com.quantityMeasurement.repository;
 
-//QuantityMeasurementCacheRepository.java
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,9 +18,32 @@ public class QuantityMeasurementCacheRepository implements IQuantityMeasurementR
 		return instance;
 	}
 
-	@Override
 	public void save(QuantityMeasurementEntity entity) {
 		cache.add(entity);
 		System.out.println("Repository: Entity Saved to Cache.");
 	}
-}  
+
+	@Override
+	public long getTotalCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void deleteAll() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getPoolStatistics() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void closeResources() {
+		// TODO Auto-generated method stub
+		
+	}
+}

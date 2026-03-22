@@ -1,58 +1,55 @@
 package com.quantityMeasurement.applicationLayer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.quantityMeasurement.DTOs.QuantityDTO;
 import com.quantityMeasurement.controller.QuantityMeasurementController;
-import com.quantityMeasurement.service.IQuantityMeasurementService;
-import com.quantityMeasurement.service.QuantityMeasurementServiceImpl;
 import com.quantityMeasurement.repository.IQuantityMeasurementRepository;
 import com.quantityMeasurement.repository.QuantityMeasurementCacheRepository;
-import com.quantityMeasurement.DTOs.QuantityDTO;
+import com.quantityMeasurement.repository.QuantityMeasurementDatabaseRepository;
+import com.quantityMeasurement.service.QuantityMeasurementServiceImpl;
+import com.quantityMeasurement.utils.ApplicationConfig;
 
-/**
- * UC15: Entry point for the N-Tier Quantity Measurement Application.
- * Coordinates initialization and delegates all logic to the Controller.
- */
 public class QuantityMeasurementApplication {
+	private static final Logger logger = LoggerFactory.getLogger(QuantityMeasurementApplication.class);
 
 	public static void main(String[] args) {
-		System.out.println("=== Initializing Quantity Measurement N-Tier System ===");
+		logger.info("=== Starting Quantity Measurement Enterprise Application ===");
 
-		// 1. Initialize Repository (Singleton Pattern)
-		// Provides centralized data storage for operation history.
-		IQuantityMeasurementRepository repo = QuantityMeasurementCacheRepository.getInstance();
+		// 1. Initialize Repository based on configuration Factory
+		String repoType = ApplicationConfig.getProperty("repository.type");
+		IQuantityMeasurementRepository repository;
 
-		// 2. Initialize Service (Dependency Injection)
-		// Encapsulates all business logic and conversion rules.
-		IQuantityMeasurementService service = new QuantityMeasurementServiceImpl(repo);
+		if ("database".equalsIgnoreCase(repoType)) {
+			repository = new QuantityMeasurementDatabaseRepository();
+			logger.info("Using JDBC Database Repository.");
+		} else {
+			repository = QuantityMeasurementCacheRepository.getInstance();
+			logger.info("Using In-Memory Cache Repository.");
+		}
 
-		// 3. Initialize Controller (Facade Pattern)
-		// Orchestrates interactions between user input and the service layer.
+		// Clean slate for testing
+		repository.deleteAll();
+
+		// 2. Dependency Injection
+		QuantityMeasurementServiceImpl service = new QuantityMeasurementServiceImpl(repository);
 		QuantityMeasurementController controller = new QuantityMeasurementController(service);
 
-		// --- 4. Run Demonstration ---
-
-		// Example 1: Length Equality (Cross-Unit)
-		System.out.println("\n--- Length Equality Demonstration ---");
+		// 3. Execution Demonstrations
+		logger.info("--- Executing Business Logic ---");
 		QuantityDTO feet = new QuantityDTO(1.0, "FEET", "LENGTH");
 		QuantityDTO inches = new QuantityDTO(12.0, "INCHES", "LENGTH");
-		controller.performComparison(feet, inches); //
 
-		// Example 2: Weight Addition
-		System.out.println("\n--- Weight Addition Demonstration ---");
-		QuantityDTO kg = new QuantityDTO(1.0, "KILOGRAM", "WEIGHT");
-		QuantityDTO grams = new QuantityDTO(500.0, "GRAM", "WEIGHT");
-		controller.performAddition(kg, grams); //
+		controller.performComparison(feet, inches);
 
-		// Example 3: Temperature Operations (Handling Selective Support)
-		System.out.println("\n--- Temperature Demonstration ---");
-		QuantityDTO celsius = new QuantityDTO(100.0, "CELSIUS", "TEMPERATURE");
-		QuantityDTO fahrenheit = new QuantityDTO(212.0, "FAHRENHEIT", "TEMPERATURE");
+		// 4. Reporting
+		logger.info("--- Repository Report ---");
+		logger.info("Total measurements stored: {}", repository.getTotalCount());
+		logger.info("Connection Pool Stats: {}", repository.getPoolStatistics());
 
-		// Comparison is supported for Temperature
-		controller.performComparison(celsius, fahrenheit);
-
-		// Addition is NOT supported for Temperature (Triggers Error Entity)
-		controller.performAddition(celsius, celsius);
-
-		System.out.println("\n=== Demonstration Complete. Check Repository for History ===");
+		// 5. Cleanup
+		repository.closeResources();
+		logger.info("=== Shutdown Sequence Complete ===");
 	}
 }
