@@ -1,6 +1,7 @@
 package com.quantityMeasurement.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.quantityMeasurement.config.SecurityConfig;
 import com.quantityMeasurement.model.QuantityDTO;
 import com.quantityMeasurement.model.QuantityInputDTO;
 import com.quantityMeasurement.model.QuantityMeasurementDTO;
@@ -11,6 +12,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -19,6 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(QuantityMeasurementController.class)
+@Import(SecurityConfig.class)
 public class QuantityMeasurementControllerTest {
 
 	@Autowired
