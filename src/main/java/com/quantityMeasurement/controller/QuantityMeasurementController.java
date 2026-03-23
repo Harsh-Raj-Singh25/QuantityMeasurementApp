@@ -1,7 +1,7 @@
 package com.quantityMeasurement.controller;
 
-import com.quantityMeasurement.model.QuantityInputDTO;
-import com.quantityMeasurement.model.QuantityMeasurementDTO;
+import com.quantityMeasurement.dto.QuantityInputDTO;
+import com.quantityMeasurement.dto.QuantityMeasurementDTO;
 import com.quantityMeasurement.service.IQuantityMeasurementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

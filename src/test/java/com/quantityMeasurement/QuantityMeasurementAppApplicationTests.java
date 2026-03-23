@@ -1,8 +1,9 @@
 package com.quantityMeasurement;
 
-import com.quantityMeasurement.model.QuantityDTO;
-import com.quantityMeasurement.model.QuantityInputDTO;
-import com.quantityMeasurement.model.QuantityMeasurementDTO;
+import com.quantityMeasurement.dto.QuantityDTO;
+import com.quantityMeasurement.dto.QuantityInputDTO;
+import com.quantityMeasurement.dto.QuantityMeasurementDTO;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

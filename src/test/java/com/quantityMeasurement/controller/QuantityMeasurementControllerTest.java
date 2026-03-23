@@ -2,9 +2,9 @@ package com.quantityMeasurement.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quantityMeasurement.config.SecurityConfig;
-import com.quantityMeasurement.model.QuantityDTO;
-import com.quantityMeasurement.model.QuantityInputDTO;
-import com.quantityMeasurement.model.QuantityMeasurementDTO;
+import com.quantityMeasurement.dto.QuantityDTO;
+import com.quantityMeasurement.dto.QuantityInputDTO;
+import com.quantityMeasurement.dto.QuantityMeasurementDTO;
 import com.quantityMeasurement.service.IQuantityMeasurementService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
