@@ -1,49 +1,49 @@
 # QuantityMeasurementApp
-## UC17 - Spring Boot REST API & Spring Data JPA Integration
+## UC18 - Google Authentication, OAuth2, & JWT Security
 
 ### Overview
-> UC17 represents a major architectural paradigm shift. The application has been fully migrated from a standalone, manual JDBC-driven Java program into a modern, enterprise-grade **Spring Boot RESTful Microservice**. 
+> UC18 elevates the application from a public API to a secure, production-ready microservice. This use case implements a **Stateless Authentication Architecture** by integrating **Google OAuth2** for delegated identity verification and **JSON Web Tokens (JWT)** for secure, session-less API access.
 
-This refactoring replaces raw SQL and manual connection pooling with **Spring Data JPA**, exposes the core business logic over HTTP via **REST Controllers**, and introduces centralized error handling and interactive API documentation.
+By offloading password management to Google and utilizing cryptographic tokens, the backend is now highly secure, horizontally scalable, and protected against unauthorized access.
 
 ---
 
 ### Key Technical Implementations
-* **Spring Boot Auto-Configuration:** Replaced manual Tomcat server setup and data source initialization with Spring Boot's embedded server and auto-configuration properties.
-* **REST Controllers (`@RestController`):** Exposed business logic through standard HTTP methods (`POST /compare`, `POST /add`, `GET /history`).
-* **Spring Data JPA (`@Repository`):** Eliminated raw JDBC boilerplate. Queries are now generated dynamically via `JpaRepository` interfaces.
-* **Global Exception Handling (`@ControllerAdvice`):** Centralized error catching to ensure clients always receive standardized, readable JSON error responses (e.g., 400 Bad Request) instead of server crash logs.
-* **Data Transfer Objects (DTOs) with Validation:** Integrated `spring-boot-starter-validation` (`@NotNull`, `@Valid`) to ensure data integrity before it reaches the service layer.
-* **Swagger/OpenAPI (`springdoc-openapi`):** Auto-generated interactive API documentation accessible directly from the browser.
+* **OAuth2 Delegated Authentication (`spring-boot-starter-oauth2-client`):** Integrated Google Sign-In to verify user identities without ever storing or handling passwords in the local database.
+* **Stateless API Security (JWT):** Replaced traditional server-side sessions with cryptographic JSON Web Tokens (`jjwt`). The server is now 100% stateless, drastically reducing memory overhead.
+* **Custom Security Filters (`OncePerRequestFilter`):** Engineered a `JwtAuthenticationFilter` to intercept all incoming HTTP requests, extract Bearer tokens, and cryptographically verify their signatures before allowing access to the controllers.
+* **Identity Synchronization (`DefaultOAuth2UserService`):** Built a custom OAuth2 user service that catches successful Google logins, extracts the profile payload, and seamlessly persists new users into the local database (`UserEntity`).
+* **Role-Based Access Control (RBAC) Foundation:** Configured `SecurityConfig` to maintain public routes for API documentation (Swagger/H2) while strictly enforcing `.authenticated()` requirements for all `/api/v1/quantities/**` endpoints.
 
 ---
 
-### Date : 15 Mar 2026
-* Migrated the Maven project to the Spring Boot ecosystem.
-* Implemented JPA Entities and Repository patterns.
-* Deployed global exception handlers and Swagger UI.
+### The Authentication Flow
 
---
+1. **The Handshake:** Client navigates to `/oauth2/authorization/google` and authenticates via Google's secure portal.
+2. **The Interception:** Spring Security catches the successful redirect. `CustomOAuth2UserService` queries the database and registers the user if they are new.
+3. **The Token Generation:** `OAuth2LoginSuccessHandler` triggers `JwtUtils` to generate a secure, HMAC-SHA256 signed JSON Web Token containing the user's email and a 24-hour expiration.
+4. **The VIP Pass (API Access):** The client attaches the JWT to the `Authorization` header (`Bearer <token>`) for all future requests. `JwtAuthenticationFilter` verifies the signature and grants access to the REST Controllers.
 
-### API Endpoints
-| HTTP Method | Endpoint | Description |
+---
+
+### API Access Rules
+
+| Endpoint Path | Protection Level | Description |
 | :--- | :--- | :--- |
-| `POST` | `/api/v1/quantities/compare` | Evaluates if two input quantities are equivalent. |
-| `POST` | `/api/v1/quantities/add` | Adds two compatible quantities and returns the normalized result. |
-| `GET` | `/api/v1/quantities/history/operation/{op}` | Retrieves audit history filtered by operation type. |
-| `GET` | `/swagger-ui.html` | Access the interactive API testing interface. |
----
-### Testing Strategy
-* **Controller Layer:** Utilized `@WebMvcTest` and `MockMvc` to test HTTP routing and JSON serialization in isolation.
-* **Integration Testing:** Deployed `@SpringBootTest` with `TestRestTemplate` to verify end-to-end flows against the embedded H2 database.
----
-### Concepts Mastered in UC17
-* **Inversion of Control (IoC) & Dependency Injection:** Leveraging `@Autowired`, `@Service`, and `@RestController` for seamless component wiring.
-* **Object-Relational Mapping (ORM):** Mapping Java classes to database tables using `@Entity`, `@Id`, and `@GeneratedValue`.
-* **API Design:** Building intuitive, predictable REST endpoints.
-* **Data Validation:** Using Jakarta Validation constraints to secure API inputs.
+| `/oauth2/authorization/google` | **Public** | Trigger the Google login flow. |
+| `/swagger-ui/**`, `/v3/api-docs/**` | **Public** | Access interactive API documentation. |
+| `/h2-console/**` | **Public** | Database management dashboard. |
+| `/api/v1/quantities/**` | **Secured (JWT Required)** | Core business logic endpoints (Add, Compare, History). |
 
 ---
 
-* **The system is now a scalable, production-ready backend service.**
-* **Code :** [UC 17 Spring Boot Backend](https://github.com/Harsh-Raj-Singh25/QuantityMeasurementApp/tree/feature/UC17-SpringBoot)
+### Local Setup & Configuration
+To run this application locally, you must provide your own Google Cloud Console credentials.
+
+1. Navigate to the [Google Cloud Console](https://console.cloud.google.com/).
+2. Create an **OAuth 2.0 Client ID** (Web Application).
+3. Set the Authorized Redirect URI to: `http://localhost:8080/login/oauth2/code/google`
+4. Update your `src/main/resources/application.properties` with the generated keys:
+```properties
+spring.security.oauth2.client.registration.google.client-id=YOUR_CLIENT_ID
+spring.security.oauth2.client.registration.google.client-secret=YOUR_CLIENT_SECRET
