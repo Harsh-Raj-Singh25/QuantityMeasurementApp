@@ -60,9 +60,7 @@ public class QuantityMeasurementControllerTest {
 
 	@Test
 	public void givenInvalidInput_whenCompareQuantities_thenReturns400() throws Exception {
-		QuantityInputDTO invalidInput = new QuantityInputDTO();
-		// Missing the nested DTOs to trigger @Valid constraints
-
+		QuantityInputDTO invalidInput = new QuantityInputDTO(); 
 		mockMvc.perform(post("/api/v1/quantities/compare").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(invalidInput))).andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.error").value("Validation Error"));
