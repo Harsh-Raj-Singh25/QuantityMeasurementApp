@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*") // Allows your frontend to talk to this backend 
 @RestController
 @RequestMapping("/api/v1/quantities")
-@Tag(name = "Quantity Measurements", description = "REST API for quantity operations")
+@Tag(name = "Quantity Measurements", description = "REST API for quantity operations") 
 public class QuantityMeasurementController {
 
 	@Autowired
@@ -37,4 +38,17 @@ public class QuantityMeasurementController {
 	public ResponseEntity<List<QuantityMeasurementDTO>> getOperationHistory(@PathVariable String operation) {
 		return ResponseEntity.ok(service.getHistoryByOperation(operation));
 	}
+	
+	@PostMapping("/convert")
+    public ResponseEntity<QuantityMeasurementDTO> convertQuantity(@Valid @RequestBody QuantityInputDTO input) {
+        QuantityMeasurementDTO response = service.convert(input);
+        
+        // If the service caught an error (like incompatible units), return a 400 Bad Request
+        if (response.isError()) {
+            return ResponseEntity.badRequest().body(response);
+        }
+        
+        // Otherwise, return 200 OK
+        return ResponseEntity.ok(response);
+    }
 }
