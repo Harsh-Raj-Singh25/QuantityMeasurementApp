@@ -28,7 +28,13 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
 		// For backend testing, we will just return the token as raw JSON on the screen
 		// so you can copy it to use in Swagger/Postman.
-		response.setContentType("application/json");
-		response.getWriter().write("{\"token\": \"" + token + "\"}");
+//		response.setContentType("application/json");
+//		response.getWriter().write("{\"token\": \"" + token + "\"}");
+		
+		// Redirect back to your frontend, attaching the token to the URL
+        // IMPORTANT: Change 3000 to whatever port your 'npx serve' is running on!
+//        response.sendRedirect("http://localhost:3000/DashBoard.html?token=" + token);
+		// Angular functionality
+		response.sendRedirect("http://localhost:4200/login?token=" + token);
 	}
 }

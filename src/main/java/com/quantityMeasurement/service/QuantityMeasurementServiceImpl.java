@@ -8,6 +8,9 @@ import com.quantityMeasurement.repository.QuantityMeasurementRepository;
 import com.quantityMeasurement.unit.IMeasurable;
 import com.quantityMeasurement.unit.LengthUnit;
 import com.quantityMeasurement.unit.TemperatureUnit;
+import com.quantityMeasurement.unit.VolumeUnit;
+import com.quantityMeasurement.unit.WeightUnit;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,8 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
     private IMeasurable getUnitInstance(String type, String unit) {
         if ("LENGTHUNIT".equalsIgnoreCase(type)) return LengthUnit.valueOf(unit.toUpperCase());
         if ("TEMPERATUREUNIT".equalsIgnoreCase(type)) return TemperatureUnit.valueOf(unit.toUpperCase());
+        if ("WEIGHTUNIT".equalsIgnoreCase(type)) return WeightUnit.valueOf(unit.toUpperCase());
+        if ("VOLUMEUNIT".equalsIgnoreCase(type)) return VolumeUnit.valueOf(unit.toUpperCase());
         throw new IllegalArgumentException("Unsupported Measurement Type: " + type);
     }
 
@@ -109,5 +114,55 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
         entity.setThatUnit(q2.getUnit());
         entity.setThatMeasurementType(q2.getMeasurementType());
         entity.setOperation(type);
+    }
+    
+    // conversion logic 
+    @Override
+    public QuantityMeasurementDTO convert(QuantityInputDTO input) {
+        QuantityDTO q1 = input.getThisQuantityDTO();
+        QuantityDTO q2 = input.getThatQuantityDTO();
+
+        QuantityMeasurementEntity entity = new QuantityMeasurementEntity();
+        
+        // Use your helper method (assuming you added CONVERT to your OperationType enum)
+        populateEntityBase(entity, q1, q2, OperationType.CONVERT);
+
+        try {
+            // Prevent cross-type conversions (e.g., Length to Temperature)
+            if (!q1.getMeasurementType().equalsIgnoreCase(q2.getMeasurementType())) {
+                throw new IllegalArgumentException("Cannot convert between different measurement types.");
+            }
+
+            //  Get the actual Enum instances using your factory method
+            IMeasurable sourceUnit = getUnitInstance(q1.getMeasurementType(), q1.getUnit());
+            IMeasurable targetUnit = getUnitInstance(q2.getMeasurementType(), q2.getUnit());
+
+            //  The Core Math: Convert to Base Unit -> Convert to Target Unit
+            double baseValue = sourceUnit.convertToBaseUnit(q1.getValue());
+            double convertedValue = targetUnit.convertFromBaseUnit(baseValue);
+
+            //  Rounding to 2 decimal places for clean UI (optional, but recommended)
+            convertedValue = Math.round(convertedValue * 100.0) / 100.0;
+
+            //   Populate the success results into the entity
+            entity.setResultValue(convertedValue);
+            entity.setResultUnit(q2.getUnit()); // We converted it TO q2's unit
+            entity.setResultMeasurementType(q1.getMeasurementType());
+            
+            // Build a readable string like "1.0 YARDS = 36.0 INCHES"
+            entity.setResultString(q1.getValue() + " " + q1.getUnit() + " = " + convertedValue + " " + q2.getUnit());
+            
+            repository.save(entity);
+            
+            //  Return the formatted DTO using your static mapper
+            return QuantityMeasurementDTO.fromEntity(entity);
+
+        } catch (Exception e) {
+            // Handle errors gracefully and save the failure to the history table
+            entity.setError(true);
+            entity.setErrorMessage(e.getMessage());
+            repository.save(entity);
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 }

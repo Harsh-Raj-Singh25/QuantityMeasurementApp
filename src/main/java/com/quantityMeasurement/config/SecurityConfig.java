@@ -28,7 +28,9 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.csrf(AbstractHttpConfigurer::disable)
+		http
+		.cors(cors -> cors.configure(http)) // ADD THIS LINE TO ALLOW FRONTEND FETCH
+		.csrf(AbstractHttpConfigurer::disable)
 				// Make the session stateless (since we are using JWTs)
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth

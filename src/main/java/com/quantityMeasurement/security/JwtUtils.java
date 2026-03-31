@@ -2,6 +2,8 @@ package com.quantityMeasurement.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +22,13 @@ public class JwtUtils {
 	private Key getSigningKey() {
 		return Keys.hmacShaKeyFor(jwtSecret.getBytes());
 	}
+	private Key key;
+
+    @PostConstruct
+    public void init() {
+        // This runs once when Spring Boot starts, rather than on every request
+        this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+    }
 
 	// 1. Generate the Token
 	public String generateJwtToken(String email) {

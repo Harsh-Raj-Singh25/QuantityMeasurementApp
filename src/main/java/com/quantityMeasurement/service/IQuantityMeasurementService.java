@@ -9,6 +9,6 @@ public interface IQuantityMeasurementService {
 	QuantityMeasurementDTO compare(QuantityInputDTO input);
 
 	QuantityMeasurementDTO add(QuantityInputDTO input);
-
+	QuantityMeasurementDTO convert(QuantityInputDTO input);
 	List<QuantityMeasurementDTO> getHistoryByOperation(String operation);
 }
