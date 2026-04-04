@@ -11,8 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -34,48 +32,49 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS
-				.csrf(csrf -> csrf.disable()) // Disable CSRF for REST APIs
+		http.cors(cors -> cors.configurationSource(corsConfigurationSource())).csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						// 1. Let EVERYONE (Guests) access the math calculator endpoints
+						// 1. PUBLIC: Swagger and API Docs (Fixes your Swagger UI failure)
+						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+
+						// 2. PUBLIC: Math calculator endpoints for Guests
 						.requestMatchers("/api/v1/quantities/**").permitAll()
 
-						// 2. Allow auth endpoints to be public
+						// 3. PUBLIC: Auth endpoints
 						.requestMatchers("/oauth2/**", "/login/**").permitAll()
 
-						// 3. Keep History and Profiles locked down to authenticated users only
+						// 4. PRIVATE: History and Profiles
 						.requestMatchers("/api/users/**").authenticated()
 
 						.anyRequest().authenticated())
-		// Keep your existing OAuth2 and JWT filter configurations here below...
 				.oauth2Login(
 						oauth2 -> oauth2.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
 								.successHandler(oAuth2LoginSuccessHandler))
-				// Fix H2 console framing issues
-				.headers(headers -> headers.frameOptions(frame -> frame.disable()))
-		;
+				.headers(headers -> headers.frameOptions(frame -> frame.disable()));
+
 		http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
 
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
-	    CorsConfiguration configuration = new CorsConfiguration();
-	    
-	    // Pull the Vercel URL from Railway environment variables
-	    // Falls back to localhost if the variable isn't found
-	    String allowedOrigin = System.getenv("ALLOWED_ORIGINS");
-	    if (allowedOrigin == null || allowedOrigin.isEmpty()) {
-	        allowedOrigin = "http://localhost:4200";
-	    }
+		CorsConfiguration configuration = new CorsConfiguration();
 
-	    configuration.setAllowedOrigins(Arrays.asList(allowedOrigin));
-	    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-	    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control"));
-	    configuration.setAllowCredentials(true);
-	    
-	    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-	    source.registerCorsConfiguration("/**", configuration);
-	    return source;
+		// Pull the Vercel URL from Railway environment variables
+		String allowedOrigin = System.getenv("ALLOWED_ORIGINS");
+		if (allowedOrigin == null || allowedOrigin.isEmpty()) {
+			allowedOrigin = "http://localhost:4200";
+		}
+
+		configuration.setAllowedOrigins(Arrays.asList(allowedOrigin));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		// Added X-Requested-With and Cache-Control for better frontend compatibility
+		configuration
+				.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control", "X-Requested-With"));
+		configuration.setAllowCredentials(true);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
 	}
 }
