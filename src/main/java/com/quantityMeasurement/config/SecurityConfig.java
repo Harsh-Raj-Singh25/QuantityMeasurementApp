@@ -58,16 +58,24 @@ public class SecurityConfig {
 		return http.build();
 	}
 
-	// Explicitly tell Spring Boot to accept traffic from Angular port 4200
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-		configuration.setAllowCredentials(true);
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration);
-		return source;
+	    CorsConfiguration configuration = new CorsConfiguration();
+	    
+	    // Pull the Vercel URL from Railway environment variables
+	    // Falls back to localhost if the variable isn't found
+	    String allowedOrigin = System.getenv("ALLOWED_ORIGINS");
+	    if (allowedOrigin == null || allowedOrigin.isEmpty()) {
+	        allowedOrigin = "http://localhost:4200";
+	    }
+
+	    configuration.setAllowedOrigins(Arrays.asList(allowedOrigin));
+	    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+	    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control"));
+	    configuration.setAllowCredentials(true);
+	    
+	    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	    source.registerCorsConfiguration("/**", configuration);
+	    return source;
 	}
 }

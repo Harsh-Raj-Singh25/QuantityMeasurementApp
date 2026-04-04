@@ -18,4 +18,12 @@ public class WebConfig {
 			}
 		};
 	}
+	 
+	public void addCorsMappings(CorsRegistry registry) {
+	    registry.addMapping("/**")
+	            .allowedOrigins(System.getenv("ALLOWED_ORIGINS")) // Pulls from Railway Variables
+	            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+	            .allowedHeaders("*")
+	            .allowCredentials(true);
+	}
 }
